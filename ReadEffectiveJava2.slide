@@ -1,0 +1,202 @@
+Reading Effective Java No.2
+あなたとJava
+1 Aug 2014
+Tags: java, isoroot
+
+takafumi tsuchida
+@manji0112
+第3回に続く...
+
+* 自己紹介
+- twitter: @manji0112
+- C#, Go
+- Java? 知らない子ですね...
+- AndroidのとあるserviceのSDKを書かされそうでツラい
+- 早く、GoでAndroidアプリ書けるようにならんかな(チラッ
+
+.link https://twitter.com/manji0112
+
+.image ReadEffectiveJava2/twittericon.jpeg 200 200
+
+* 輪読会について
+
+- 基本、毎週金曜 20:00~からで。
+
+- 担当したい項目に名前書いて下さい。
+
+.link https://docs.google.com/spreadsheets/d/1fiVvENbaaT6exDLFrna8aUHOYE47il51CRDF3l1fxq4/edit?usp=sharing 担当割り当て
+
+* 1章 オブジェクトの生成と消滅 続きから
+
+コンストラクタの可視性に関するエトセトラ
+
+- 項目3
+privateコンストラクタかenum型でシングルトン特性を強制する
+
+- 項目4
+privateのコンストラクタでインスタンス化不可能を強制する
+
+* 項目3
+
+privateコンストラクタかenum型でシングルトン特性を強制する
+
+* Singleton?
+
+- おそらく一番有名なデザインパターン
+
+- インスタンスが1つしか存在しない唯一のオブジェクトを作成する
+
+ほげほげManagerとかふがふがSensorなど、システム内に1つしか存在しないものってあるよね。
+
+- Global変数として乱用されたりするので、嫌われる悲しい性を背負っている
+
+.image ReadEffectiveJava2/singleton.png
+
+* Singleton実装パターン①
+
+- public finalのフィールドによるシングルトン
+- constructorがprivateなので、instance化不可(項目4)
+
+.code ReadEffectiveJava2/singleton1.java
+
+* Singleton実装パターン②
+
+- staticファクトリーメソッドによるシングルトン(ここ、進研ゼｍ
+
+.code ReadEffectiveJava2/singleton2.java
+
+* ホントに1度きり?
+
+.image ReadEffectiveJava2/mitsuo.jpeg
+
+* reflectionによるprivateなconstructorへのアクセス
+
+- AccessibleObject.setAccesssibleを使えば、instance化可能
+- これも防ぎたかったら、constructorで2つ目のinstance生成時にexception投げよう
+
+.code ReadEffectiveJava2/reflectAccess.java
+
+* ①と②の比較
+
+- ①は宣言を見ただけで、Singletonであるという意図が伝わりやすい
+- ②はAPIを変更せずに、クラスの振る舞いを変更できる
+- ②はもう一つの利点があるが、詳しくは項目27で!
+
+ちなみにパフォーマンスの違はない。
+JVMはstaticファクトリーメソッドをインライン展開します。
+
+* ツラいところ
+
+.image ReadEffectiveJava2/tsurai.jpeg 400 800
+
+* シリアライズが面倒
+
+- クラス宣言に、implements Serializableを追加するだけじゃダメ
+- すべてのインスタンスフィールドをtransientにして、かつreadResolveメソッドも提供する必要がある
+
+.code ReadEffectiveJava2/serialize.java
+
+* ちょっとした罠
+
+.image ReadEffectiveJava2/trap.jpg 400 600
+
+* 誰か解説して下さい
+
+- ちょっと無理
+
+.link http://www.jpcert.or.jp/java-rules/msc07-j.html
+
+* Singleton実装パターン③
+
+- 単一要素を持つenum型によるシングルトン
+- ベストプラクティス? シリアライズやリフレクションの問題がない
+
+.code ReadEffectiveJava2/enum.java
+
+* もうちょっとSingleton
+
+- instance化を遅延させるケース
+- naiveな実装
+- シングルスレッドだと平気だけど...
+
+.code ReadEffectiveJava2/lazy_naive.java
+
+* synchronizedメソッドにする
+
+- getInstance()をsynchronizedメソッドにする
+- 同期化が必要なのは最初の呼び出しだけなので、非効率
+
+.code ReadEffectiveJava2/lazy_sync.java
+
+* Double Check Locking
+
+- instanceのnullチェックをすることにより、getInstance()メソッドの同期化コストを下げる
+
+.code ReadEffectiveJava2/doubleCheckLock.java
+
+* 教えてエロい人
+
+- Javaのメモリモデルのせいで、Double Check Lockingはスレッドセーフじゃないらしいけど、本当?
+
+- 最近のJVMはどうなの?
+
+- 元ネタが2002年記事なのでかなり古い...
+
+.link http://www.ibm.com/developerworks/jp/java/library/j-dcl/
+
+* ということで...
+
+Singletonにするときは、enum型使いましょう
+
+* 項目4
+
+privateのコンストラクタでインスタンス化不可能を強制する
+
+* instance化したくないケース?
+
+- ユーティリティクラスを作成するとき
+- java.lang.Math, java.util.Arrays...
+- 項目1で出てきたjava.util.Collectionsのように、特定interfaceを実装したオブジェクトのファクトリーメソッドなどをまとめるとき
+
+* constructorをprivateにする
+
+- 項目3と被るが、constructorさえprivateにすればinstance化できない
+
+.code ReadEffectiveJava2/nonInstance.java
+
+* ということで...
+
+instance化が必要ないクラスは、constructorをprivateにするの忘れないようにしましょう
+
+* まとめ
+
+まとめに書くほどのことはないけど...
+
+- Singletonを実装するときは、enum型を使おう
+
+* おまけ(ステマ)
+
+GoにおけるSingleton実装パターン
+
+* naiveな実装
+
+- 小文字で始まっているものはExportされないことを利用
+
+.code ReadEffectiveJava2/naive.go
+
+* スレッドセーフな実装
+
+- さっきのはスレッドセーフじゃない
+- Goはgoroutineでカジュアルに軽量プロセスを立ち上げるのでツラい
+- 標準パッケージのsync.Onceを使おう
+- once.Doは初回しか実行されないことに注意
+
+.link http://golang.org/pkg/sync/#Once.Do
+
+.code ReadEffectiveJava2/concurrent.go
+
+* 次回
+
+- 予定 8/8 20:00~ @リラクゼーションルーム
+- 次の担当は?
+- とりあえず1回2項目でやってみたけど、丁度いい?遅い? 
