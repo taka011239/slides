@@ -24,7 +24,7 @@ takafumi tsuchida
 
 nil mapはreadはemptyのように振る舞うが、writeはエラーになるので注意
 
-.play goinaction_ch04_map/nilMap_error.go
+.play goinaction_ch04_map/nilmap_error.go
 
 * Working with maps
 
