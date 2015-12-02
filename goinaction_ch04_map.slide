@@ -106,7 +106,7 @@ Not make a copy of the map
 
 * ???
 
-.code goinaction_ch04_map/concurrent???.go /START OMIT/,/END OMIT/
+.code goinaction_ch04_map/concurrent2.go /START OMIT/,/END OMIT/
 
 * Map Internals in Go
 
