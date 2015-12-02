@@ -1,0 +1,117 @@
+Go In Action 輪読会
+4章 map編
+4 Dec 2015
+Tags: go, golang, go-reading-jp
+
+takafumi tsuchida
+@manji0112
+
+* Declaration and initialization
+
+* make
+
+.code goinaction_ch04_map/initialize.go /dict/
+
+- map doesn't have cap.
+
+* literal
+
+.code goinaction_ch04_map/initialize.go /dict2/
+
+* Nil map
+
+.code goinaction_ch04_map/initialize.go /dict3/
+
+nil mapはreadはemptyのように振る舞うが、writeはエラーになるので注意
+
+.play goinaction_ch04_map/nilMap_error.go
+
+* Working with maps
+
+* Assignment
+
+.code goinaction_ch04_map/assignment.go /colors/,/\"/
+
+- key must be comparable(==, !=)
+- slice, function, struct contain slice doesn't use key
+
+.link https://golang.org/ref/spec#Comparison_operators
+
+* Retrieve
+
+- Test existance
+
+.code goinaction_ch04_map/retrieve.go /value/,/}/
+
+- If zero value is invalid ...
+
+.code goinaction_ch04_map/retrieve2.go /value/,/}/
+
+map always return anything.
+Even if key doesn't exist, return a zero value
+
+* Utilize zero values
+
+If key doesn't exist, a map of boolean values return false(zero value).
+
+.code goinaction_ch04_map/utilize1.go
+
+* Utilize zero values
+
+Appending to a nil slice just allocates a new slice
+
+.code goinaction_ch04_map/utilize2.go
+
+.link https://blog.golang.org/go-maps-in-action
+
+* Iteration
+
+.code goinaction_ch04_map/iterate.go /colors/,/range/
+
+* Enforce the order
+
+.play goinaction_ch04_map/iterate2.go /START OMIT/,/END OMIT/
+
+.link https://blog.golang.org/go-maps-in-action
+
+* Remove
+
+.code goinaction_ch04_map/remove.go
+
+do nothing if the specified key doesn't exist.
+
+* Passing maps between functions
+
+Not make a copy of the map
+
+.code goinaction_ch04_map/passing.go /START OMIT/,/END OMIT/
+
+* Concurrency
+
+.link https://golang.org/doc/faq#atomic_maps
+
+大体map使うところは同期されてるだろうし、mapの操作を全てAtomicにしたら遅くなっちゃう
+
+* race condition
+
+.code goinaction_ch04_map/nonconcurrent.go /START OMIT/,/END OMIT/
+
+* solution
+
+.code goinaction_ch04_map/concurrent.go /START OMIT/,/END OMIT/
+
+.code goinaction_ch04_map/concurrent.go /go add/,/colors.Unlock/
+
+.link https://blog.golang.org/go-maps-in-action
+
+* ???
+
+.code goinaction_ch04_map/concurrent???.go /START OMIT/,/END OMIT/
+
+* Map Internals in Go
+
+- Go In ActionのAuthorの人が書いたブログが詳しい
+- sliceと違って、内部構造はあまり意識する必要なさそう
+
+.link http://www.goinggo.net/2013/12/macro-view-of-map-internals-in-go.html
+.link https://golang.org/src/runtime/hashmap.go
