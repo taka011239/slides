@@ -104,10 +104,6 @@ Not make a copy of the map
 
 .link https://blog.golang.org/go-maps-in-action
 
-* ???
-
-.code goinaction_ch04_map/concurrent2.go /START OMIT/,/END OMIT/
-
 * Map Internals in Go
 
 - Go In ActionのAuthorの人が書いたブログが詳しい
