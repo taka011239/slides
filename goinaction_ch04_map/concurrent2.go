@@ -19,7 +19,7 @@ func main() {
 		"ForestGreen": "#228b22",
 	}}
 
-	go add(colors)
+	go add(&colors)
 
 	colors.RLock()
 	for key, value := range colors.m {
@@ -28,7 +28,7 @@ func main() {
 	colors.RUnlock()
 }
 
-func add(colors SafeMap) {
+func add(colors *SafeMap) {
 	colors.Lock()
 	colors.m["hoge"] = "#hoge"
 	colors.m["fuga"] = "#fuga"
